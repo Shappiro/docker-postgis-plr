@@ -16,8 +16,7 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
 # We add postgis as well to prevent build errors (that we dont see on local builds)
 # on docker hub e.g.
 # The following packages have unmet dependencies:
-RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable
-RUN sudo apt-get update
+RUN apt-get update
 RUN apt-get update; apt-get install -y postgresql-client-11 postgresql-common postgresql-11 postgresql-11-postgis-2.5 postgresql-11-pgrouting netcat r-base libudunits2-dev libgdal-dev libgeos-dev libproj-dev postgresql-11-plr nano
 
 # Open port 5432 so linked containers can see them
