@@ -19,6 +19,9 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
 RUN apt-get update
 RUN apt-get update; apt-get install -y postgresql-client-11 postgresql-common postgresql-11 postgresql-11-postgis-2.5 postgresql-11-pgrouting netcat r-base libudunits2-dev libgdal-dev libgeos-dev libproj-dev postgresql-11-plr nano
 
+# Packages for R
+RUN Rscript -e 'install.packages(c("rgdal","sf","sp"), repos="https://cran.rstudio.com",dependencies=TRUE)'
+
 # Open port 5432 so linked containers can see them
 EXPOSE 5432
 
