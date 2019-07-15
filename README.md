@@ -11,8 +11,7 @@ differentiates itself by:
 * connections are restricted to the docker subnet
 * a default database 'gis' is created for you so you can use this container 'out of the
   box' when it runs with e.g. QGIS
-* replication support included
-* Ability to create multiple database when you spin the database.
+* Ability to create multiple database when you spin the database
 * Enable multiple extensions in the database when setting it up, plr included
 * Enable R statistical language with GIS modules preinstalled
 
@@ -24,11 +23,11 @@ just getting started with docker, PostGIS and QGIS, we really recommend that you
 
 The following convention is used for tagging the images we build:
 
-kartoza/postgis:[postgres_version]-[postgis-version]-[r-version]
+corylabiosphere/postgis-plr:[postgres_version]-[postgis-version]-[r-version]
 
 So for example:
 
-``corylabiosphere/postgis:9.6-2.4-3.2`` Provides PostgreSQL 9.6, PostGIS 2.4, R 3.2
+``corylabiosphere/postgis-plr:9.6-2.4-3.2`` Provides PostgreSQL 9.6, PostGIS 2.4, R 3.2
 
 **Note:** We highly recommend that you use tagged versions because
 successive minor versions of PostgreSQL write their database clusters
@@ -157,7 +156,7 @@ Currently you can pass `.sql` and `.sql.gz` files as mounted volumes.
 
 ```
 
-docker run -d -v ./setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql kartoza/postgis`
+docker run -d -v ./setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql corylabiosphere/postgis-plr`
 ```
 
 
@@ -173,128 +172,6 @@ docker run -d -v $HOME/postgres_data:/var/lib/postgresql corylabiosphere/postgis
 
 You need to ensure the ``postgres_data`` directory has sufficient permissions
 for the docker process to read / write it.
-
-## Postgres Replication Setup
-
-Replication allows you to maintain two or more synchronised copies of a database, with a
-single **master** copy and one or more **replicant** copies. The animation below illustrates 
-this - the layer with the red boundary is accessed from the master database and the layer 
-with the green fill is accessed from the replicant database. When edits to the master 
-layer are saved, they are automatically propagated to the replicant. Note also that the 
-replicant is read-only.
-
-![qgis](https://user-images.githubusercontent.com/178003/37755610-dd3b774a-2dae-11e8-9fa1-4877e2034675.gif)
-
-This image is provided with replication abilities. We can 
-categorize an instance of the container as `master` or `replicant`. A `master` 
-instance means that a particular container has a role as a single point of 
-database write. A `replicant` instance means that a particular container will 
-mirror database content from a designated master. This replication scheme allows 
-us to sync databases. However a `replicant` is only for read-only transaction, thus 
-we can't write new data to it. The whole database cluster will be replicated.
-
-To experiment with the replication abilities, you can see a (docker-compose.yml)[sample/replication/docker-compose.yml] 
-sample. There are several environment variables that you can set, such as:
-
-Master settings:
-- **ALLOW_IP_RANGE**: A pg_hba.conf domain format which will allow specified host(s) 
-  to connect into the container. This is needed to allow the `slave` to connect 
-  into `master`, so specifically this settings should allow `slave` address. It is also needed to allow clients on other hosts to connect to either the slave or the master. 
-- Both POSTGRES_USER and POSTGRES_PASS will be used as credentials for the slave to
-  connect, so make sure you change this into something secure.
-  
-Slave settings:
-- **REPLICATE_FROM**: This should be the domain name or IP address of the `master` 
-  instance. It can be anything from the docker resolved name like that written in the sample, 
-  or the IP address of the actual machine where you expose `master`. This is 
-  useful to create cross machine replication, or cross stack/server.
-- **REPLICATE_PORT**: This should be the port number of `master` postgres instance. 
-  Will default to 5433 (default postgres port), if not specified.
-- **DESTROY_DATABASE_ON_RESTART**: Default is `True`. Set to 'False' to prevent 
-  this behaviour. A replicant will always destroy its current database on 
-  restart, because it will try to sync again from `master` and avoid inconsistencies.
-- **PROMOTE_MASTER**: Default none. If set to any value then the current replicant 
-  will be promoted to master. 
-  In some cases when the `master` container has failed, we might want to use our `replicant` 
-  as `master` for a while. However, the promoted replicant will break consistencies and 
-  is not able to revert to replicant anymore, unless it is destroyed and resynced 
-  with the new master.
-
-To run the sample replication, follow these instructions:
-
-Do a manual image build by executing the `build.sh` script
-
-```
-./build.sh
-```
-
-Go into the `sample/replication` directory and experiment with the following Make 
-command to run both master and slave services.
-
-```
-make up
-```
-
-To shutdown services, execute:
-
-```
-make down
-```
-
-To view logs for master and slave respectively, use the following command:
-
-```
-make master-log
-make slave-log
-```
-
-You can try experiment with several scenarios to see how replication works
-
-### Sync changes from master to replicant
-
-You can use any postgres database tools to create new tables in master, by 
-connecting using POSTGRES_USER and POSTGRES_PASS credentials using exposed port.
-In the sample, the master database was exposed on port 7777.
-Or you can do it via command line, by entering the shell:
-
-```
-make master-shell
-```
-
-Then made any database changes using psql.
-
-After that, you can see that the replicant follows the changes by inspecting the
-slave database. You can, again, use database management tools using connection 
-credentials, hostname, and ports for replicant. Or you can do it via command line, 
-by entering the shell:
-
-```
-make slave-shell
-```
-
-Then view your changes using psql.
-
-### Promoting replicant to master
-
-You will notice that you cannot make changes in replicant, because it is read-only.
-If somehow you want to promote it to master, you can specify `PROMOTE_MASTER: 'True'` 
-into slave environment and set `DESTROY_DATABASE_ON_RESTART: 'False'`. 
-
-After this, you can make changes to your replicant, but master and replicant will not 
-be in sync anymore. This is useful if the replicant needs to take over a failover master. 
-However it is recommended to take additional action, such as creating a backup from the 
-slave so a dedicated master can be created again.
-
-### Preventing replicant database destroy on restart
-
-You can optionally set `DESTROY_DATABASE_ON_RESTART: 'False'` after successful sync 
-to prevent the database from being destroyed on restart. With this setting you can 
-shut down your replicant and restart it later and it will continue to sync using the existing 
-database (as long as there are no consistencies conflicts).
-
-However, you should note that this option doesn't mean anything if you didn't 
-persist your database volume. Because if it is not persisted, then it will be lost 
-on restart because docker will recreate the container.
 
 ## Credits
 

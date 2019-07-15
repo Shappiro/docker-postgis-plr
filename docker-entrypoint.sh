@@ -54,20 +54,6 @@ while [[ "$(ls -A ${PG_PID} 2>/dev/null)" ]]; do
 done
 }
 
-if [[ -z "$REPLICATE_FROM" ]]; then
-	# This means this is a master instance. We check that database exists
-	echo "Setup master database"
-	source /setup-database.sh
-	entry_point_script
-	kill_postgres
-else
-	# This means this is a slave/replication instance.
-	echo "Setup slave database"
-	source /setup-replication.sh
-fi
-
-
-
 
 
 

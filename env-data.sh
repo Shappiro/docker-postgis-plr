@@ -39,19 +39,6 @@ fi
 if [ -z "${R}" ]; then
 	R=true
 fi
-# Replication settings
-if [ -z "${REPLICATE_PORT}" ]; then
-	REPLICATE_PORT=5433
-fi
-if [ -z "${DESTROY_DATABASE_ON_RESTART}" ]; then
-	DESTROY_DATABASE_ON_RESTART=true
-fi
-if [ -z "${PG_MAX_WAL_SENDERS}" ]; then
-	PG_MAX_WAL_SENDERS=10
-fi
-if [ -z "${PG_WAL_KEEP_SEGMENTS}" ]; then
-	PG_WAL_KEEP_SEGMENTS=250
-fi
 
 if [ -z "${IP_LIST}" ]; then
 	IP_LIST='*'

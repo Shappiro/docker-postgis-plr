@@ -45,12 +45,5 @@ else
 	authMethod=trust
 fi
 
-if [[ -z "$REPLICATE_FROM" ]]; then
-	# if env not set, then assume this is master instance
-	# add rules to pg_hba.conf to allow replication from all
-	echo "Add rule to pg_hba: replication user"
-	echo "host replication all 0.0.0.0/0 $authMethod" >> ${ROOT_CONF}/pg_hba.conf
-fi
-
 # Put lock file to make sure conf was not reinitialized
 touch ${SETUP_LOCKFILE}
