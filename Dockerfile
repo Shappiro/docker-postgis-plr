@@ -1,6 +1,6 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
 FROM debian:stable
-MAINTAINER Tim Sutton<tim@kartoza.com>
+MAINTAINER Aaron Iemma<corylabiosphere@gmail.com> # Quite everything based on Tim Sutton's <tim@kartoza.com> image! 
 
 RUN  export DEBIAN_FRONTEND=noninteractive
 ENV  DEBIAN_FRONTEND noninteractive
@@ -16,13 +16,13 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
 # We add postgis as well to prevent build errors (that we dont see on local builds)
 # on docker hub e.g. "The following packages have unmet dependencies"
 RUN apt-get update
-RUN apt-get update; apt-get install -y postgresql-client-11 postgresql-common postgresql-11 postgresql-11-postgis-2.5 postgresql-11-pgrouting netcat r-base libudunits2-dev libgdal-dev libgeos-dev libproj-dev postgresql-11-plr nano
+RUN apt-get update; apt-get install -y postgresql-client-11 postgresql-common postgresql-11 postgresql-11-postgis-2.5 postgresql-11-pgrouting netcat r-base libudunits2-dev libgdal-dev libgeos-dev libproj-dev postgresql-11-plr
 
 # Packages for R
 RUN Rscript -e 'install.packages(c("rgdal","sf","sp"), repos="https://cran.rstudio.com",dependencies=TRUE)'
 
-# Open port 5432 so linked containers can see them
-EXPOSE 5432
+# Open port 5433 so linked containers can see them
+EXPOSE 5433
 
 # Run any additional tasks here that are too tedious to put in
 # this dockerfile directly.

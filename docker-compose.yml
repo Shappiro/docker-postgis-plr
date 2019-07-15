@@ -8,7 +8,7 @@ volumes:
 services:
 
   db:
-    image: kartoza/postgis:11.0-2.5
+    image: corylabiosphere/postgis-plr:11.0-2.5
     volumes:
       - postgis-data:/var/lib/postgresql
       - dbbackups:/backups

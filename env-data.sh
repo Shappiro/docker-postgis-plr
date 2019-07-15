@@ -29,12 +29,15 @@ fi
 if [ -z "${PGSSLMODE}" ]; then
 	PGSSLMODE=require
 fi
-# Enable hstore and topology by default
+# Enable hstore, topology and R by default
 if [ -z "${HSTORE}" ]; then
 	HSTORE=true
 fi
 if [ -z "${TOPOLOGY}" ]; then
 	TOPOLOGY=true
+fi
+if [ -z "${R}" ]; then
+	R=true
 fi
 # Replication settings
 if [ -z "${REPLICATE_PORT}" ]; then
@@ -55,7 +58,7 @@ if [ -z "${IP_LIST}" ]; then
 fi
 
 if [ -z "${POSTGRES_MULTIPLE_EXTENSIONS}" ]; then
-  POSTGRES_MULTIPLE_EXTENSIONS='postgis,hstore,postgis_topology'
+  POSTGRES_MULTIPLE_EXTENSIONS='postgis,hstore,postgis_topology,plr'
 fi
 # Compatibility with official postgres variable
 # Official postgres variable gets priority

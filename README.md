@@ -1,10 +1,8 @@
-# docker-postgis
-
-
+# docker-postgis-plr
 
 A simple docker container that runs PostGIS
 
-Visit our page on the docker hub at: https://hub.docker.com/r/kartoza/postgis/
+Visit our page on the docker hub at: https://hub.docker.com/r/corylabiosphere/postgis-plr/
 
 There are a number of other docker postgis containers out there. This one
 differentiates itself by:
@@ -15,11 +13,8 @@ differentiates itself by:
   box' when it runs with e.g. QGIS
 * replication support included
 * Ability to create multiple database when you spin the database.
-* Enable multiple extensions in the database when setting it up
-
-We will work to add more security features to this container in the future with 
-the aim of making a PostGIS image that is ready to be used in a production 
-environment (though probably not for heavy load databases).
+* Enable multiple extensions in the database when setting it up, plr included
+* Enable R statistical language with GIS modules preinstalled
 
 There is a nice 'from scratch' tutorial on using this docker image on Alex Urquhart's
 blog [here](https://alexurquhart.com/post/set-up-postgis-with-docker/) - if you are
@@ -29,11 +24,11 @@ just getting started with docker, PostGIS and QGIS, we really recommend that you
 
 The following convention is used for tagging the images we build:
 
-kartoza/postgis:[postgres_version]-[postgis-version]
+kartoza/postgis:[postgres_version]-[postgis-version]-[r-version]
 
 So for example:
 
-``kartoza/postgis:9.6-2.4`` Provides PostgreSQL 9.6, PostGIS 2.4
+``corylabiosphere/postgis:9.6-2.4-3.2`` Provides PostgreSQL 9.6, PostGIS 2.4, R 3.2
 
 **Note:** We highly recommend that you use tagged versions because
 successive minor versions of PostgreSQL write their database clusters
@@ -45,20 +40,19 @@ database storage.
 
 There are various ways to get the image onto your system:
 
-
 The preferred way (but using most bandwidth for the initial image) is to
 get our docker trusted build like this:
 
 
 ```
-docker pull kartoza/postgis
+docker pull corylabiosphere/postgis-plr
 ```
 
 To build the image yourself without apt-cacher (also consumes more bandwidth
 since deb packages need to be refetched each time you build) do:
 
 ```
-docker build -t kartoza/postgis git://github.com/kartoza/docker-postgis
+docker build -t corylabiosphere/postgis-plr git://github.com/Shappiro/docker-postgis-plr
 ```
 
 To build with apt-cacher (and minimise download requirements) you need to
@@ -67,13 +61,13 @@ match your cacher host. Then build using a local url instead of directly from
 github.
 
 ```
-git clone git://github.com/kartoza/docker-postgis
+git clone git://github.com/Shappiro/docker-postgis-plr
 ```
 
 Now edit ``71-apt-cacher-ng`` then do:
 
 ```
-docker build -t kartoza/postgis .
+docker build -t corylabiosphere/postgis-plr .
 ```
 
 ## Run
@@ -82,7 +76,7 @@ docker build -t kartoza/postgis .
 To create a running container do:
 
 ```
-sudo docker run --name "postgis" -p 25432:5432 -d -t kartoza/postgis
+sudo docker run --name "postgis" -p 25432:5432 -d -t corylabiosphere/postgis-plr
 ```
 
 ## Environment variables
@@ -109,7 +103,6 @@ Postgres conf is setup to listen to all connections and if a user needs to restr
 PostgreSQL listens to you can define it with the following environment variable. The default is set to listen to 
 all connections.
 * -e IP_LIST=<*>
-
 
 
 ## Convenience docker-compose.yml
@@ -175,7 +168,7 @@ Docker volumes can be used to persist your data.
 
 ```
 mkdir -p ~/postgres_data
-docker run -d -v $HOME/postgres_data:/var/lib/postgresql kartoza/postgis`
+docker run -d -v $HOME/postgres_data:/var/lib/postgresql corylabiosphere/postgis-plr`
 ```
 
 You need to ensure the ``postgres_data`` directory has sufficient permissions
@@ -309,4 +302,5 @@ Tim Sutton (tim@kartoza.com)
 Gavin Fleming (gavin@kartoza.com)
 Risky Maulana (rizky@kartoza.com)
 Admire Nyakudya (admire@kartoza.com)
-December 2018
+Aaron Iemma (corylabiosphere@gmail.com)
+June 2019
