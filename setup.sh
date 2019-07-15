@@ -12,7 +12,7 @@ echo "host    all             all             172.0.0.0/8               md5" >> 
 echo "host    all             all             192.168.0.0/16               md5" >> $ROOT_CONF/pg_hba.conf
 # Listen on all ip addresses
 echo "listen_addresses = '*'" >> $CONF
-echo "port = 5432" >> $CONF
+echo "port = 5433" >> $CONF
 
 
 # Create backup template for conf

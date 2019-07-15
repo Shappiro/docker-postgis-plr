@@ -41,7 +41,7 @@ if [ -z "${R}" ]; then
 fi
 # Replication settings
 if [ -z "${REPLICATE_PORT}" ]; then
-	REPLICATE_PORT=5432
+	REPLICATE_PORT=5433
 fi
 if [ -z "${DESTROY_DATABASE_ON_RESTART}" ]; then
 	DESTROY_DATABASE_ON_RESTART=true

@@ -18,7 +18,7 @@ PGPASS=qgis
 
 IDFILE=/home/timlinux/postgis-current-container.id
 ID=`cat $IDFILE`
-docker commit $ID qgis/postgis:$VERSION -run='{"Cmd": ["/start.sh"], "PortSpecs": ["5432"], "Hostname": "postgis"}' -author="Tim Sutton <tim@linfiniti.com>"
+docker commit $ID qgis/postgis:$VERSION -run='{"Cmd": ["/start.sh"], "PortSpecs": ["5433"], "Hostname": "postgis"}' -author="Tim Sutton <tim@linfiniti.com>"
 docker kill $ID
 docker rm $ID
 rm $IDFILE
@@ -35,5 +35,5 @@ echo "Postgis has been committed as $1 and redeployed as $NEWID"
 docker ps -a | grep $NEWID
 echo "If thhere was no pre-existing database, you can access this using"
 IPADDRESS=`docker inspect postgis | grep IPAddress | grep -o '[0-9\.]*'`
-echo "psql -l -p 5432 -h $IPADDRESS -U $PGUSER"
+echo "psql -l -p 5433 -h $IPADDRESS -U $PGUSER"
 echo "and password $PGPASS"

@@ -76,7 +76,7 @@ docker build -t corylabiosphere/postgis-plr .
 To create a running container do:
 
 ```
-sudo docker run --name "postgis" -p 25432:5432 -d -t corylabiosphere/postgis-plr
+sudo docker run --name "postgis" -p 25433:5433 -d -t corylabiosphere/postgis-plr
 ```
 
 ## Environment variables
@@ -111,7 +111,7 @@ For convenience we have provided a ``docker-compose.yml`` that will run a
 copy of the database image and also our related database backup image (see 
 [https://github.com/kartoza/docker-pg-backup](https://github.com/kartoza/docker-pg-backup)).
 
-The docker compose recipe will expose PostgreSQL on port 25432 (to prevent
+The docker compose recipe will expose PostgreSQL on port 25433 (to prevent
 potential conflicts with any local database instance you may have).
 
 Example usage:
@@ -130,7 +130,7 @@ host / client):
 
 
 ```
-psql -h localhost -U docker -p 25432 -l
+psql -h localhost -U docker -p 25433 -l
 ```
 
 **Note:** Default postgresql user is 'docker' with password 'docker'.
@@ -209,7 +209,7 @@ Slave settings:
   or the IP address of the actual machine where you expose `master`. This is 
   useful to create cross machine replication, or cross stack/server.
 - **REPLICATE_PORT**: This should be the port number of `master` postgres instance. 
-  Will default to 5432 (default postgres port), if not specified.
+  Will default to 5433 (default postgres port), if not specified.
 - **DESTROY_DATABASE_ON_RESTART**: Default is `True`. Set to 'False' to prevent 
   this behaviour. A replicant will always destroy its current database on 
   restart, because it will try to sync again from `master` and avoid inconsistencies.

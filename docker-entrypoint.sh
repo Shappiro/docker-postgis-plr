@@ -28,8 +28,8 @@ else
         arr=(${list})
         SINGLE_DB=${arr[0]}
         case "$f" in
-            *.sql)    echo "$0: running $f"; psql ${SINGLE_DB} -U ${POSTGRES_USER} -p 5432 -h localhost  -f ${f} || true ;;
-            *.sql.gz) echo "$0: running $f"; gunzip < "$f" | psql ${SINGLE_DB} -U ${POSTGRES_USER} -p 5432 -h localhost || true ;;
+            *.sql)    echo "$0: running $f"; psql ${SINGLE_DB} -U ${POSTGRES_USER} -p 5433 -h localhost  -f ${f} || true ;;
+            *.sql.gz) echo "$0: running $f"; gunzip < "$f" | psql ${SINGLE_DB} -U ${POSTGRES_USER} -p 5433 -h localhost || true ;;
             *)        echo "$0: ignoring $f" ;;
         esac
         echo
