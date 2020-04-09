@@ -7,7 +7,6 @@ Visit our page on the docker hub at: https://hub.docker.com/r/corylabiosphere/po
 There are a number of other docker postgis containers out there. This one
 differentiates itself by:
 
-* provides ssl support out of the box
 * connections are restricted to the docker subnet
 * a default database 'gis' is created for you so you can use this container 'out of the
   box' when it runs with e.g. QGIS
