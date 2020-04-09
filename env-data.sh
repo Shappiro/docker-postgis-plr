@@ -22,6 +22,9 @@ fi
 if [ -z "${POSTGRES_PASS}" ]; then
 	POSTGRES_PASS=docker
 fi
+if [ -z "${POSTGRES_PORT}" ]; then
+	POSTGRES_PORT=5433
+fi
 if [ -z "${POSTGRES_DBNAME}" ]; then
 	POSTGRES_DBNAME=gis
 fi
