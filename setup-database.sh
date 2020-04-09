@@ -34,7 +34,7 @@ trap "echo \"Sending SIGTERM to postgres\"; killall -s SIGTERM postgres" SIGTERM
 su - postgres -c "${POSTGRES} -D ${DATADIR} -c config_file=${CONF} ${LOCALONLY} &"
 
 # wait for postgres to come up
-until su - postgres -c "psql -l"; do
+until su - postgres -c "psql -p ${POSTGRES_PORT} -l"; do
   sleep 1
 done
 echo "postgres ready"
@@ -48,23 +48,20 @@ source /setup-user.sh
 # Since we now pass a comma separated list in database creation we need to search for all databases as a test
 
 for db in $(echo ${POSTGRES_DBNAME} | tr ',' ' '); do
-        RESULT=`su - postgres -c "psql -t -c \"SELECT count(1) from pg_database where datname='${db}';\""`
+        RESULT=`su - postgres -c "psql -p ${POSTGRES_PORT} -t -c \"SELECT count(1) from pg_database where datname='${db}';\""`
         if [[  ${RESULT} -eq 0 ]]; then
             echo "Create db ${db}"
-            su - postgres -c "createdb  -O ${POSTGRES_USER}  ${db}"
+            su - postgres -c "createdb -p ${POSTGRES_PORT} -O ${POSTGRES_USER}  ${db}"
             for ext in $(echo ${POSTGRES_MULTIPLE_EXTENSIONS} | tr ',' ' '); do
                 echo "Enabling ${ext} in the database ${db}"
-                su - postgres -c "psql -c 'CREATE EXTENSION IF NOT EXISTS ${ext} cascade;' $db"
+                su - postgres -c "psql -p ${POSTGRES_PORT} -c 'CREATE EXTENSION IF NOT EXISTS ${ext} cascade;' $db"
             done
-            echo "Loading legacy sql"
-            su - postgres -c "psql ${db} -f ${SQLDIR}/legacy_minimal.sql" || true
-            su - postgres -c "psql ${db} -f ${SQLDIR}/legacy_gist.sql" || true
         else
          echo "${db} db already exists"
         fi
 done
 
 # This should show up in docker logs afterwards
-su - postgres -c "psql -l"
+su - postgres -c "psql -p ${POSTGRES_PORT} -l"
 
 
